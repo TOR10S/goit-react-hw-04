@@ -1,0 +1,14 @@
+.header {
+    position: relative;
+    top: 0;
+    left: 0;
+    background-color: red;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.input {
+    margin: 24px;
+}
