@@ -13,24 +13,21 @@ function App() {
   const [isError, setIsError] = useState(false);
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState('');
-  const [selectedImage, setSelectedImage] = useState(null); // Для вибраного зображення
-  const [isModalOpen, setIsModalOpen] = useState(false); // Стан для модального вікна
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false); 
 
-  // Виконуємо запит при зміні query або page
   useEffect(() => {
     const fetchImages = async () => {
-      if (query === '') return; // Якщо запит пустий, не робимо запит до API
+      if (query === '') return; 
       try {
         setIsError(false);
         setIsLoading(true);
 
         const response = await fetchArticles(query, page);
         
-        // Якщо це перший запит (нова пошукова фраза), очищаємо попередні результати
         if (page === 1) {
           setImages(response.results);
         } else {
-          // Інакше додаємо нові результати до існуючих
           setImages((prevImages) => [...prevImages, ...response.results]);
         }
       } catch (error) {
@@ -41,15 +38,15 @@ function App() {
     };
 
     fetchImages();
-  }, [query, page]); // Викликати ефект при зміні query або page
+  }, [query, page]); 
 
   const handleSearch = (newQuery) => {
-    setQuery(newQuery);  // Змінюємо пошуковий запит
-    setPage(1);  // Повертаємось на першу сторінку для нового пошуку
+    setQuery(newQuery);  
+    setPage(1);  
   };
 
   const handleLoadMore = () => {
-    setPage((prevPage) => prevPage + 1);  // Збільшуємо сторінку для завантаження нових результатів
+    setPage((prevPage) => prevPage + 1);  
   };
 
   const openModal = (imageUrl) => {
