@@ -1,4 +1,4 @@
-export default function LoadMore({handleClick}) {
+export default function LoadMoreBtn({handleClick}) {
     return (
         <button onClick={handleClick}>
             load more

@@ -1,4 +1,4 @@
-import Image from "../Image/Image"
+import ImageCard from "../ImageCard/ImageCard"
 import css from "./ImageGallery.module.css"
 
 export default function ImageGallery({images, onImageClick}) {
@@ -6,7 +6,7 @@ export default function ImageGallery({images, onImageClick}) {
         <ul className={css.list}>
           {images.map((img) => (            
             <li key={img.id} onClick={() => onImageClick(img.urls.regular)}>
-                <Image img={img} />
+                <ImageCard img={img} />
             </li>
           ))}
         </ul>

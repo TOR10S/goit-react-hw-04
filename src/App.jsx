@@ -2,7 +2,7 @@ import SearchBar from "./components/SearchBar/SearchBar";
 import ImageGallery from "./components/ImageGallery/ImageGallery";
 import Loader from "./components/Loader/Loader";
 import ErrorMessage from "./components/ErrorMessage/ErrorMessage";
-import LoadMore from "./components/LoadMore/LoadMore";
+import LoadMoreBtn from "./components/LoadMore/LoadMoreBtn";
 import { useEffect, useState } from 'react';
 import { fetchArticles } from './services/api';
 import ImageModal from './components/ImageModal/ImageModal';
@@ -11,39 +11,45 @@ function App() {
   const [images, setImages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [query, setQuery] = useState('');
   const [selectedImage, setSelectedImage] = useState(null); // Для вибраного зображення
   const [isModalOpen, setIsModalOpen] = useState(false); // Стан для модального вікна
 
-  const handleSearch = async (query) => {
-    try {
-      setImages([]);
-      setIsError(false);
-      setIsLoading(true);
-      setQuery(query);
-      setPage(0);
-      const response = await fetchArticles(query);
-      setImages(response.results);
-    } catch (error) {
-      setIsError(true);
-    } finally {
-      setIsLoading(false);
-    }
+  // Виконуємо запит при зміні query або page
+  useEffect(() => {
+    const fetchImages = async () => {
+      if (query === '') return; // Якщо запит пустий, не робимо запит до API
+      try {
+        setIsError(false);
+        setIsLoading(true);
+
+        const response = await fetchArticles(query, page);
+        
+        // Якщо це перший запит (нова пошукова фраза), очищаємо попередні результати
+        if (page === 1) {
+          setImages(response.results);
+        } else {
+          // Інакше додаємо нові результати до існуючих
+          setImages((prevImages) => [...prevImages, ...response.results]);
+        }
+      } catch (error) {
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchImages();
+  }, [query, page]); // Викликати ефект при зміні query або page
+
+  const handleSearch = (newQuery) => {
+    setQuery(newQuery);  // Змінюємо пошуковий запит
+    setPage(1);  // Повертаємось на першу сторінку для нового пошуку
   };
 
-  const handleLoadMore = async () => {
-    try {
-      setIsLoading(true);
-      let nextPage = page + 1;
-      setPage(nextPage);
-      const response = await fetchArticles(query, page);
-      setImages((prevImages) => [...prevImages, ...response.results]);
-    } catch (error) {
-      setIsError(true);
-    } finally {
-      setIsLoading(false);
-    }
+  const handleLoadMore = () => {
+    setPage((prevPage) => prevPage + 1);  // Збільшуємо сторінку для завантаження нових результатів
   };
 
   const openModal = (imageUrl) => {
@@ -63,7 +69,7 @@ function App() {
       {isLoading && <Loader />}
       {isError && <ErrorMessage />}
       {images.length > 0 && !isLoading && !isError && (
-        <LoadMore handleClick={handleLoadMore} />
+        <LoadMoreBtn handleClick={handleLoadMore} />
       )}
 
       {selectedImage && (
